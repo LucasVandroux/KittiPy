@@ -51,7 +51,7 @@ def create_label_path(im_id, im_set, db_absolute_path = ABSOLUTE_PATH):
     
     return label_path
 
-def import_labels(im_id, im_set, db_absolute_path = ABSOLUTE_PATH):
+def import_labels(im_id, im_set = 'train', db_absolute_path = ABSOLUTE_PATH):
     """
     This import the labels of an image in a list of dictionnary
     
