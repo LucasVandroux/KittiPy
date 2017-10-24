@@ -3,6 +3,8 @@ from scipy import misc                # To import the pictures
 import math                           # Various mathematical fcts.
 import matplotlib.pyplot as plt       # To display the images
 import matplotlib.patches as patches  # To draw on the images
+from os import listdir                # To list all what a directory contains
+from os.path import isfile, join      # To only select files in a directory
 
 # *** PARAMETERS ***
 ABSOLUTE_PATH = "/data2/Kitti/left_12g/"
@@ -279,5 +281,24 @@ def display_im(im_id, im_set, display_boxes = True, display_info = True,
     if display_info == True:
         # Display information about the object
         print_labels(labels, types_to_display, info_to_display)
-
+        
+# *** FILES ***
+def get_data_list(im_set, db_absolute_path = ABSOLUTE_PATH):
+    """
+    This function return a numpy array of all the ids of the files in a folder
+    
+    Argument:
+    im_set           -- 'train' or 'test'
+    db_absolute_path -- absolute path to the Kitti root folder
+    
+    Returns:
+    label_path -- absolute path to the label
+    """
+    folder_path = db_absolute_path + globals()[(im_set +'_path_im').upper()]
+    
+    list_files = [f for f in listdir(folder_path) if (isfile(join(folder_path, f)) and f.endswith('.png'))]
+    
+    list_ids = [int(file_name[:-4]) for file_name in list_files]
+    
+    return np.array(sorted(list_ids))
 
