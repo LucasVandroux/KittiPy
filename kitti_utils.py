@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt       # To display the images
 import matplotlib.patches as patches  # To draw on the images
 from os import listdir                # To list all what a directory contains
 from os.path import isfile, join      # To only select files in a directory
+import numpy as np                    # For diverse array manipulation
 
 # *** PARAMETERS ***
 ABSOLUTE_PATH = "/data2/Kitti/left_12g/"
@@ -230,7 +231,7 @@ def create_boxes(labels, types_to_display = DEFAULT_TYPES_TO_DISPLAY):
 def display_im(im_id, im_set, display_boxes = True, display_info = True, 
                types_to_display = DEFAULT_TYPES_TO_DISPLAY, 
                info_to_display = DEFAULT_INFO_TO_DISPLAY, db_absolute_path = ABSOLUTE_PATH, 
-               im_width = FIG_WIDTH, im_height = FIG_HEIGHT, im_axis='off', display_title = True):
+               im_width = FIG_WIDTH, im_height = FIG_HEIGHT, display_axis = False, display_title = True):
     """
     This function displays an image from its id
     
@@ -244,7 +245,7 @@ def display_im(im_id, im_set, display_boxes = True, display_info = True,
     db_absolute_path -- absolute path to the Kitti root folder
     im_width         -- width of the image to display
     im_height        -- height of the image to display
-    im_axis          -- 'on' or 'off'
+    display_axis     -- True or False
     display_title    -- True or False to display the id of the image as the title of the subplot
     
     Returns:
@@ -260,7 +261,11 @@ def display_im(im_id, im_set, display_boxes = True, display_info = True,
         ax.set_title(im_set +'_'+ str(im_id), fontsize = FIG_FONT_SIZE_TITLE)
     
     ax.imshow(im)
-    ax.axis(im_axis)
+    
+    if display_axis:
+        ax.axis('on')
+    else:
+        ax.axis('off')
     
     if display_boxes == True or display_info == True:
         # Get the labels of an image
