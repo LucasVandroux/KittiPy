@@ -228,16 +228,18 @@ def create_boxes(labels, types_to_display = DEFAULT_TYPES_TO_DISPLAY):
             
     return boxes_to_display
 
-def display_im(im_id, im_set, display_boxes = True, display_info = True, 
+def display_im(im, labels = [], display_boxes = True, display_info = True, 
                types_to_display = DEFAULT_TYPES_TO_DISPLAY, 
-               info_to_display = DEFAULT_INFO_TO_DISPLAY, db_absolute_path = ABSOLUTE_PATH, 
-               im_width = FIG_WIDTH, im_height = FIG_HEIGHT, display_axis = False, display_title = True):
+               info_to_display = DEFAULT_INFO_TO_DISPLAY, 
+               db_absolute_path = ABSOLUTE_PATH, im_width = FIG_WIDTH, 
+               im_height = FIG_HEIGHT, display_axis = False, 
+               title = ''):
     """
     This function displays an image from its id
     
     Argument:
-    im_id            -- int corresponding to the image id in the kitti dataset
-    im_set           -- 'train' or 'test'
+    image            -- np array representing the image
+    labels           -- dictionary containing the labels of the image
     display_boxes    -- True or False
     display_info     -- True or False
     types_to_display -- list of the name of the types of object to consider
@@ -246,36 +248,28 @@ def display_im(im_id, im_set, display_boxes = True, display_info = True,
     im_width         -- width of the image to display
     im_height        -- height of the image to display
     display_axis     -- True or False
-    display_title    -- True or False to display the id of the image as the title of the subplot
+    title            -- String to use as a title
     
     Returns:
     Display image
     """
-    # Import the image 
-    im = import_im(im_id, im_set, db_absolute_path)
-
-    # Display image
+    # Create the figure to later display the image
     fig, ax = plt.subplots(1, figsize=(im_width, im_height))
     
-    if display_title == True:
-        ax.set_title(im_set +'_'+ str(im_id), fontsize = FIG_FONT_SIZE_TITLE)
+    # Add the title if it exists
+    if not title:
+        ax.set_title(title, fontsize = FIG_FONT_SIZE_TITLE)
     
     ax.imshow(im)
     
-    if display_axis:
-        ax.axis('on')
-    else:
-        ax.axis('off')
+    # Display the axis of the image
+    ax.axis('on') if display_axis else ax.axis('off')
     
-    if display_boxes == True or display_info == True:
-        # Get the labels of an image
-        labels = import_labels(im_id, im_set, db_absolute_path)
-    
-    # Display boxes
-    if display_boxes == True:        
+    # If labels are given, draw the boxes
+    if labels:
         # Get the list of boxes
         boxes = create_boxes(labels, types_to_display)
-        
+
         # Add the boxes to the picture
         for box in boxes:
             ax.add_patch(box)
@@ -283,7 +277,7 @@ def display_im(im_id, im_set, display_boxes = True, display_info = True,
     plt.show()
     
     # Display information
-    if display_info == True:
+    if display_info and labels:
         # Display information about the object
         print_labels(labels, types_to_display, info_to_display)
         
