@@ -197,13 +197,15 @@ def import_im(im_id, im_set, db_absolute_path = ABSOLUTE_PATH):
     
     return im
 
-def create_boxes(labels, types_to_display = DEFAULT_TYPES_TO_DISPLAY):
+def create_boxes(labels, display_center_boxes = True,
+                 types_to_display = DEFAULT_TYPES_TO_DISPLAY):
     """
     This function create boxes according to a dictionnary of labels
     
     Argument:
-    labels            -- list of dictionnaries containing the spacial information
-    types_to_display  -- list of the type of object to display
+    labels                -- list of dictionnaries containing the spacial info.
+    display_center_boxes  -- True / False to indicate the center of the boxes
+    types_to_display      -- list of the type of object to display
     
     Returns:
     boxes_to_display  -- list of patches.Rectangle objects
@@ -213,7 +215,14 @@ def create_boxes(labels, types_to_display = DEFAULT_TYPES_TO_DISPLAY):
     
     for obj in labels:
         if obj['type'] in types_to_display:
+            # If there is no angle in the dictionary
+            if 'alpha' in obj:
+                box_angle = obj['alpha'] 
+            else:
+                box_angle = 0
+            
             bbox = obj['bbox']
+            
             boxes_to_display.append(
                 patches.Rectangle(
                     (bbox['x_min'], bbox['y_min']),        # (x,y)
@@ -221,11 +230,37 @@ def create_boxes(labels, types_to_display = DEFAULT_TYPES_TO_DISPLAY):
                     bbox['y_max'] - bbox['y_min'],         # height
                     obj['alpha'],                          # rotation angle
                     linewidth = 3,                         # linewidth
-                    edgecolor = COLOR_TYPE[obj['type']],   # color corresponding to type
+                    edgecolor = COLOR_TYPE[obj['type']],   # color corres. to type
                     facecolor = 'none'                     # not fill
                 )
-            ) 
+            )
             
+            if display_center_boxes:
+                # Mark the center of the box
+                boxes_to_display.append(
+                    patches.FancyArrow(
+                        bbox['x_min'],
+                        bbox['y_min'],
+                        bbox['x_max'] - bbox['x_min'],
+                        bbox['y_max'] - bbox['y_min'],
+                        head_length = 0,
+                        linewidth = 2,
+                        edgecolor = COLOR_TYPE[obj['type']]
+                    )
+                )
+
+                boxes_to_display.append(
+                    patches.FancyArrow(
+                        bbox['x_max'],
+                        bbox['y_min'],
+                        bbox['x_min'] - bbox['x_max'],
+                        bbox['y_max'] - bbox['y_min'],
+                        head_length = 0,
+                        linewidth = 2,
+                        edgecolor = COLOR_TYPE[obj['type']]
+                    )
+                )
+                
     return boxes_to_display
 
 def display_im(im, labels = [], display_boxes = True, display_info = True, 
@@ -233,22 +268,23 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
                info_to_display = DEFAULT_INFO_TO_DISPLAY, 
                db_absolute_path = ABSOLUTE_PATH, im_width = FIG_WIDTH, 
                im_height = FIG_HEIGHT, display_axis = False, 
-               title = ''):
+               title = '', display_center_boxes = True):
     """
     This function displays an image from its id
     
     Argument:
-    image            -- np array representing the image
-    labels           -- dictionary containing the labels of the image
-    display_boxes    -- True or False
-    display_info     -- True or False
-    types_to_display -- list of the name of the types of object to consider
-    info_to_display  -- list of the name of the information to display
-    db_absolute_path -- absolute path to the Kitti root folder
-    im_width         -- width of the image to display
-    im_height        -- height of the image to display
-    display_axis     -- True or False
-    title            -- String to use as a title
+    image                 -- np array representing the image
+    labels                -- dictionary containing the labels of the image
+    display_boxes         -- True or False
+    display_info          -- True or False
+    types_to_display      -- list of the name of the types of object to consider
+    info_to_display       -- list of the name of the information to display
+    db_absolute_path      -- absolute path to the Kitti root folder
+    im_width              -- width of the image to display
+    im_height             -- height of the image to display
+    display_axis          -- True or False
+    title                 -- String to use as a title
+    display_center_boxes  -- True / False to indicate the center of the boxes
     
     Returns:
     Display image
@@ -268,7 +304,7 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
     # If labels are given, draw the boxes
     if labels:
         # Get the list of boxes
-        boxes = create_boxes(labels, types_to_display)
+        boxes = create_boxes(labels, display_center_boxes, types_to_display)
 
         # Add the boxes to the picture
         for box in boxes:
