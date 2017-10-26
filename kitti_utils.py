@@ -3,6 +3,7 @@ from scipy import misc                # To import the pictures
 import math                           # Various mathematical fcts.
 import matplotlib.pyplot as plt       # To display the images
 import matplotlib.patches as patches  # To draw on the images
+import matplotlib.ticker as plticker  # To draw the grid over the image
 from os import listdir                # To list all what a directory contains
 from os.path import isfile, join      # To only select files in a directory
 import numpy as np                    # For diverse array manipulation
@@ -25,13 +26,15 @@ COLOR_TYPE ={
     'Car':            '#ff0000',   # Red
     'Van':            '#ffff00',   # Yellow
     'Truck':          '#ff00ff',   # Fuchsia
-    'Pedestrian':     '#33cc33',   # Green
+    'Pedestrian':     '#00ff00',   # Green
     'Person_sitting': '#00ffff',   # Light Blue
     'Cyclist':        '#ff9933',   # Orange
     'Tram':           '#0000ff',   # Blue      
     'Misc':           '#996633',   # Brown
     'DontCare':       '#9900ff',   # Violet
 }
+
+COLOR_GRID = '#ffaaff'   # Light Pink
 
 # *** LABELS ***
 def create_label_path(im_id, im_set, db_absolute_path = ABSOLUTE_PATH):
@@ -268,7 +271,7 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
                info_to_display = DEFAULT_INFO_TO_DISPLAY, 
                db_absolute_path = ABSOLUTE_PATH, im_width = FIG_WIDTH, 
                im_height = FIG_HEIGHT, display_axis = False, 
-               title = '', display_center_boxes = True):
+               title = '', display_center_boxes = True, num_cell_grid = 0):
     """
     This function displays an image from its id
     
@@ -285,6 +288,7 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
     display_axis          -- True or False
     title                 -- String to use as a title
     display_center_boxes  -- True / False to indicate the center of the boxes
+    num_cell_grid         -- Number of cell in the grid along one axis
     
     Returns:
     Display image
@@ -295,6 +299,21 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
     # Add the title if it exists
     if not title:
         ax.set_title(title, fontsize = FIG_FONT_SIZE_TITLE)
+    
+    # Draw the grid over the image
+    if num_cell_grid:
+        # Set the gridding interval
+        interval_x = im.shape[1] / num_cell_grid
+        loc_x = plticker.MultipleLocator(base = interval_x)
+        ax.xaxis.set_major_locator(loc_x)
+
+        interval_y = im.shape[0] / num_cell_grid
+        loc_y = plticker.MultipleLocator(base = interval_y)
+        ax.yaxis.set_major_locator(loc_y)
+
+        # Add the grid
+        ax.grid(which='major', axis='both', linestyle='-', 
+                linewidth = 2, color=COLOR_GRID)
     
     ax.imshow(im)
     
