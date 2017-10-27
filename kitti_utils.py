@@ -218,8 +218,8 @@ def create_boxes(labels, display_center_boxes = True,
     
     for obj in labels:
         if obj['type'] in types_to_display:
-            # If there is no angle in the dictionary
-            if 'alpha' in obj:
+            # If there is no angle in the dictionary and no center need to drawn
+            if 'alpha' in obj and not display_center_boxes:
                 box_angle = obj['alpha'] 
             else:
                 box_angle = 0
@@ -231,7 +231,7 @@ def create_boxes(labels, display_center_boxes = True,
                     (bbox['x_min'], bbox['y_min']),        # (x,y)
                     bbox['x_max'] - bbox['x_min'],         # width
                     bbox['y_max'] - bbox['y_min'],         # height
-                    obj['alpha'],                          # rotation angle
+                    box_angle,                             # rotation angle
                     linewidth = 3,                         # linewidth
                     edgecolor = COLOR_TYPE[obj['type']],   # color corres. to type
                     facecolor = 'none'                     # not fill
@@ -317,8 +317,8 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
     
     ax.imshow(im)
     
-    # Display the axis of the image
-    ax.axis('on') if display_axis else ax.axis('off')
+    # Display the axis of the image (need to display it to see the grid)
+    ax.axis('on') if display_axis or num_cell_grid else ax.axis('off')
     
     # If labels are given, draw the boxes
     if labels:
