@@ -100,7 +100,7 @@ display_im(im, labels = [], display_boxes = True, display_info = True,
 list_ids = get_data_list('train')
 image = import_im(list_ids[3], 'train')
 labels = import_labels(list_ids[3], 'train')
-display_im(image, labels, title = 'Train ' + str(list_ids[2]), num_cell_grid = 10)
+display_im(image, labels, num_cell_grid = 10)
 ```
 **Output**
 
