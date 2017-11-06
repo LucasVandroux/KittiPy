@@ -269,20 +269,19 @@ def create_boxes(labels, display_center_boxes = True,
 def display_im(im, labels = [], display_boxes = True, display_info = True, 
                types_to_display = DEFAULT_TYPES_TO_DISPLAY, 
                info_to_display = DEFAULT_INFO_TO_DISPLAY, 
-               db_absolute_path = ABSOLUTE_PATH, im_width = FIG_WIDTH, 
+               im_width = FIG_WIDTH, 
                im_height = FIG_HEIGHT, display_axis = False, 
                title = '', display_center_boxes = True, num_cell_grid = 0):
     """
     This function displays an image from its id
     
     Argument:
-    image                 -- np array representing the image
-    labels                -- dictionary containing the labels of the image
+    im                    -- np array representing the image
+    labels                -- list of dictionaries containing the labels of the image
     display_boxes         -- True or False
     display_info          -- True or False
     types_to_display      -- list of the name of the types of object to consider
     info_to_display       -- list of the name of the information to display
-    db_absolute_path      -- absolute path to the Kitti root folder
     im_width              -- width of the image to display
     im_height             -- height of the image to display
     display_axis          -- True or False
@@ -294,20 +293,20 @@ def display_im(im, labels = [], display_boxes = True, display_info = True,
     Display image
     """
     # Create the figure to later display the image
-    fig, ax = plt.subplots(1, figsize=(im_width, im_height))
+    fig, ax = plt.subplots(1, figsize=(int(im_width), int(im_height)))
     
     # Add the title if it exists
     if not title:
-        ax.set_title(title, fontsize = FIG_FONT_SIZE_TITLE)
+        ax.set_title(str(title), fontsize = FIG_FONT_SIZE_TITLE)
     
     # Draw the grid over the image
     if num_cell_grid:
         # Set the gridding interval
-        interval_x = im.shape[1] / num_cell_grid
+        interval_x = im.shape[1] / int(num_cell_grid)
         loc_x = plticker.MultipleLocator(base = interval_x)
         ax.xaxis.set_major_locator(loc_x)
 
-        interval_y = im.shape[0] / num_cell_grid
+        interval_y = im.shape[0] / int(num_cell_grid)
         loc_y = plticker.MultipleLocator(base = interval_y)
         ax.yaxis.set_major_locator(loc_y)
 
