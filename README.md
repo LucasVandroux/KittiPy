@@ -95,7 +95,7 @@ display_im(im, labels = [], display_boxes = True, display_info = True,
 **Remarks**: To change `FIG_FONT_SIZE_TITLE`, `COLOR_GRID` and `COLOR_TYPE` do it in the global variables at the begining of the `kittipy.py` file.
 
 ### Example
-**Code**
+**Code** _(Jupyter Notebook)_
 ```python
 list_ids = get_data_list('train')
 image = import_im(list_ids[3], 'train')
